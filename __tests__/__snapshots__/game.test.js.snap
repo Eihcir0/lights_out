@@ -1,0 +1,4 @@
+exports[`test Game renders correctly 1`] = `
+<div
+  id="lightsout" />
+`;
