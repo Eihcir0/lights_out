@@ -170,7 +170,8 @@ Test Suites: 1 passed, 1 total
 Tests:       6 passed, 6 total
 Snapshots:   1 passed, 1 total
 Time:        4.929s
-Ran all test suites.```
+Ran all test suites.
+```
 
 Additionally, this demo was QA'd on the following screens:
   - MacBook Air 13"
