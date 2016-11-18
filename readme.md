@@ -2,7 +2,7 @@
 This demo was created for a coding challenge from [Little Weaver Web Collective](https://littleweaverweb.com/).
 
 
-## [CLICK HERE FOR LIVE DEMO](https://eihcir0.github.io/Responsive_Design_Bilingual_Demo/index.html)
+## [CLICK HERE FOR LIVE DEMO](https://eihcir0.github.io/lights_out/)
 
 
 ![EXAMPLE](/Screen Shot 2016-11-17 at 11.31.05 PM.png)
@@ -187,5 +187,6 @@ Due to the limited scope of this demo, little or no attention was given to the f
 - responsiveness
 - cross-browser compatibility
 - search engine optimization
+- sound fx
 
 Additionally, a possible feature to implement in the future would be a **"SOLVE ME"** button which would then calculate the winning move for the current board using the [Chase the Lights](http://www.logicgamesonline.com/lightsout/tutorial.html) method.  The solution would be shown to the user using some data visualization animation.
