@@ -1,5 +1,5 @@
 import React from 'react';
-const DIRS = [[0,0],[-1,0],[1,0],[0,-1],[0,1]];
+const POSITIONS = [[0,0],[-1,0],[1,0],[0,-1],[0,1]];
 
 class Game extends React.Component {
   constructor() {
@@ -17,12 +17,12 @@ class Game extends React.Component {
     this.setupBoard();
   }
 
-  setupBoard() {
-    let newBoard = [];
+  setupBoard() { //creates a 2d array of random true/false elements
+    var newBoard = [];
     for (var row = 0; row < this.boardSize; row++) {
-      let newRow = [];
+      var newRow = [];
       for (var col = 0; col < this.boardSize; col++) {
-        let lit = Math.random() > 0.5 ? 1 : -1;// -1 light out, 1 light on
+        var lit = Math.random() >= 0.5 ? true : false; //lit true or false randomly assigned
         newRow.push(lit);
       }
       newBoard.push(newRow);
@@ -31,8 +31,8 @@ class Game extends React.Component {
   }
 
   validCell(currentCell) {
-    let row = currentCell[0];
-    let col = currentCell[1];
+    var row = currentCell[0];
+    var col = currentCell[1];
     return (row >= 0 &&
             row < this.boardSize &&
             col >= 0 &&
@@ -40,37 +40,40 @@ class Game extends React.Component {
 
   }
 
-  toggleLight(row,col) {
-    let newBoard = this.state.board;
+
+  toggleLights(row,col) {
+    var newBoard = this.state.board;
 
     var that = this;
-    DIRS.forEach(dir => {
-      let currentCell = [row + dir[0], col + dir[1]];
+    POSITIONS.forEach(position => {
+      var currentCell = [row + position[0], col + position[1]];
       if (that.validCell(currentCell)) {
-        newBoard[currentCell[0]][currentCell[1]] *= -1;
+        var r = currentCell[0];
+        var c = currentCell[1];
+        newBoard[r][c] = !newBoard[r][c]; //toggles light on/off
       }
     });
     this.setState({board: newBoard});
     if (this.checkVictory()) {
-      this.victory();
+      setTimeout(this.victory, 1500); //timeout used to allow time for CSS transition to lights off
     }
   }
 
   getDisplayRows() {
-    let cellClassName;
+    var cellClassName;
     var that = this;
     return this.state.board.map((row, rowIdx) => {
         return row.map((lit, colIdx) => {
-          if (lit === -1) {
-            cellClassName = "square off";
-          } else {
+          if (lit) {
             cellClassName = "square on";
+          } else {
+            cellClassName = "square off";
           }
           return (
             <div className={cellClassName}
                   data-row={rowIdx}
                   data-col={colIdx}
-                  onClick={this.toggleLight.bind(that,rowIdx,colIdx)}/>
+                  onClick={this.toggleLights.bind(that,rowIdx,colIdx)}/>
           );
         });
       }
@@ -79,10 +82,8 @@ class Game extends React.Component {
 
   checkVictory() {
     for (var rowIdx = 0; rowIdx < this.boardSize; rowIdx++) {
-      for (var colIdx = 0; colIdx < this.boardSize; colIdx++) {
-        if (this.state.board[rowIdx][colIdx] === 1) {
+      if (this.state.board[rowIdx].includes(true)) {
           return false;
-        }
       }
     }
     return true;
@@ -95,7 +96,7 @@ class Game extends React.Component {
 
 
   render() {
-    let rows = this.getDisplayRows();
+    var rows = this.getDisplayRows();
 
       return (
         <div id="lightsout">

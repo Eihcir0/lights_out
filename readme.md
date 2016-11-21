@@ -67,59 +67,63 @@ lights_out
 
 
 ## Key features
-All of the key features (from the requirements above) are contained in the Game component.
+All of the key features (from the requirements listed above) are contained in the Game component.
 
 `setupBoard()`
 
-This function creates a new 2d array where each element contains either a `-1` (indicating light off) or `1` (indicating light on) and is randomly determined.  The numbers `-1` and `1` were chosen as markers as they are easy to toggle by simple multiplication with -1.
+This function creates a new 2d array where each element contains a randomly generated boolean -- `true = light on, false = light off`.  
 
 The `board` portion of the state of the Game component is then set to this new array.
 
 ```js
-setupBoard() {
-  let newBoard = [];
+setupBoard() { //creates a 2d array of random true/false elements
+  var newBoard = [];
   for (var row = 0; row < this.boardSize; row++) {
-    let newRow = [];
+    var newRow = [];
     for (var col = 0; col < this.boardSize; col++) {
-      let lit = Math.random() >= 0.5 ? 1 : -1;// -1 light out, 1 light on
+      var lit = Math.random() >= 0.5 ? true : false; //lit true or false randomly assigned
       newRow.push(lit);
     }
     newBoard.push(newRow);
   }
   this.setState({board: newBoard});
 }
-
 ```
 
 
-`toggleLight()`  
+`toggleLights()`  
 
-Each cell from the board is assigned an onClick callback to the `toggleLight()` function with the position of the cell passed using the `bind` function.
+Each cell from the board is assigned an onClick callback to the `toggleLights()` function with the position of the cell passed using the `bind` function.
 ```js
 return (
   <div className={cellClassName}
         data-row={rowIdx}
         data-col={colIdx}
-        onClick={this.toggleLight.bind(this,rowIdx,colIdx)}/>
+        onClick={this.toggleLights.bind(this,rowIdx,colIdx)}/>
 );
 ```
-The `toggleLight()` function iterates through each of the 5 possible directions (up, down, left, right and self) which were previously defined in a constant and checks if they are valid position on the board through a helper function `validCell()`.  If valid, the value of that cell is toggled by multiplying by -1.  Finally, the `board` portion of the state of the `game` component is updated with the new board values.  
+The `toggleLights()` function iterates through each of the 5 possible positions (up, down, left, right and self) and checks if they are on the board through a helper function `validCell()`.  If valid, the value of that cell is toggled and the state is updated with the new board values.  
 
 
 ```js
-toggleLight(row,col) {
-  let newBoard = this.state.board;
+const POSITIONS = [[0,0],[-1,0],[1,0],[0,-1],[0,1]];
+..
+toggleLights(row,col) {
+  var newBoard = this.state.board;
 
   var that = this;
-  DIRS.forEach(dir => {
-    let currentCell = [row + dir[0], col + dir[1]];
+  POSITIONS.forEach(position => {
+    var currentCell = [row + position[0], col + position[1]];
     if (that.validCell(currentCell)) {
-      newBoard[currentCell[0]][currentCell[1]] *= -1;
+      var r = currentCell[0];
+      var c = currentCell[1];
+      newBoard[r][c] = !newBoard[r][c]; //toggles light on/off
     }
   });
   this.setState({board: newBoard});
+
   if (this.checkVictory()) {
-    this.victory();
+    setTimeout(this.victory, 1500); //timeout used to allow time for CSS transition to show all lights off on board
   }
 }
 
@@ -127,44 +131,43 @@ toggleLight(row,col) {
 Upon re-render, the CSS class name for each cell is based on the value of each element stored in the array in Game's state.
 
 ```js
-if (lit === -1) {
-  cellClassName = "square off";
-} else {
+if (lit) {
   cellClassName = "square on";
+} else {
+  cellClassName = "square off";
 }
 
 ```
 
 `checkVictory()`
 
-At the end of the `toggleLight()` function, the `checkVictory()` function is called to determine if the game has been won.  This function iterates through all elements, immediately returning false if it finds a `1` indicating a light still on.  If none are found, it returns true.
+At the end of the `toggleLights()` function, the `checkVictory()` function is called to determine if the game has been won.  This function iterates through all rows in board and immediately returns false if any of the rows include a `true` (for light on).  If none are found, the function returns true because all the lights are off and the game is won.
 
 ```js
-  checkVictory() {
-    for (var rowIdx = 0; rowIdx < this.boardSize; rowIdx++) {
-      for (var colIdx = 0; colIdx < this.boardSize; colIdx++) {
-        if (this.state.board[rowIdx][colIdx] === 1) {
-          return false;
-        }
-      }
+checkVictory() {
+  for (var rowIdx = 0; rowIdx < this.boardSize; rowIdx++) {
+    if (this.state.board[rowIdx].includes(true)) {
+        return false;
     }
-    return true;
   }
+  return true;
+}
 ```
 
 ## Testing
 
-This demo was tested with [Jest](https://github.com/facebook/jest).  Because of the limited scope of the demo, there weren't a lot of tests to be run.  However, the skeleton is now in place for adding additional tests after future implementations.
+This demo was tested with [Jest](https://github.com/facebook/jest).  Because of the limited scope of the demo, there weren't a lot of tests to be run.  However, the skeleton is now in place for additional testing in the future.
 
 
 ```
+
 PASS  __tests__/game.test.js
  ✓ Game renders correctly (17ms)
- ✓ validCell detects cell out of bounds (1ms)
- ✓ validCell detects cell in bounds (1ms)
- ✓ detects Winner
- ✓ detects non-Winner
- ✓ handles toggle (5ms)
+ ✓ validCell() detects cell out of bounds (1ms)
+ ✓ validCell() detects cell in bounds (1ms)
+ ✓ checkVictory() detects Winner
+ ✓ checkVictory() detects non-Winner
+ ✓ toggleLights() handles toggle (5ms)
 
 Test Suites: 1 passed, 1 total
 Tests:       6 passed, 6 total
@@ -172,9 +175,6 @@ Snapshots:   1 passed, 1 total
 Time:        4.929s
 Ran all test suites.
 ```
-
-Additionally, this demo was QA'd on the following screens:
-  - MacBook Air 13"
 
 And the following browsers:
   - Chrome ver 54.0.2840.71
@@ -190,4 +190,6 @@ Due to the limited scope of this demo, little or no attention was given to the f
 - search engine optimization
 - sound fx
 
-Additionally, a possible feature to implement in the future would be a **"SOLVE ME"** button which would then calculate the winning move for the current board using the [Chase the Lights](http://www.logicgamesonline.com/lightsout/tutorial.html) method.  The solution would be shown to the user using some data visualization animation.
+One feature to add would be to only allow the initial board to be setup in a configuration that is solvable.  This would be achieved by using the [Chase the Lights](http://www.logicgamesonline.com/lightsout/tutorial.html) and checking if the bottom row matched one of the 7 winnable patterns.
+
+Another possible feature to implement would be a **"SOLVE ME"** button which would then calculate the winning move for the current board.  The solution would be shown to the user using some data visualization animation.

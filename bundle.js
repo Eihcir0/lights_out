@@ -21476,7 +21476,7 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var DIRS = [[0, 0], [-1, 0], [1, 0], [0, -1], [0, 1]];
+	var POSITIONS = [[0, 0], [-1, 0], [1, 0], [0, -1], [0, 1]];
 	
 	var Game = function (_React$Component) {
 	  _inherits(Game, _React$Component);
@@ -21504,11 +21504,12 @@
 	  }, {
 	    key: "setupBoard",
 	    value: function setupBoard() {
+	      //creates a 2d array of random true/false elements
 	      var newBoard = [];
 	      for (var row = 0; row < this.boardSize; row++) {
 	        var newRow = [];
 	        for (var col = 0; col < this.boardSize; col++) {
-	          var lit = Math.random() > 0.5 ? 1 : -1; // -1 light out, 1 light on
+	          var lit = Math.random() >= 0.5 ? true : false; //lit true or false randomly assigned
 	          newRow.push(lit);
 	        }
 	        newBoard.push(newRow);
@@ -21523,20 +21524,22 @@
 	      return row >= 0 && row < this.boardSize && col >= 0 && col < this.boardSize;
 	    }
 	  }, {
-	    key: "toggleLight",
-	    value: function toggleLight(row, col) {
+	    key: "toggleLights",
+	    value: function toggleLights(row, col) {
 	      var newBoard = this.state.board;
 	
 	      var that = this;
-	      DIRS.forEach(function (dir) {
-	        var currentCell = [row + dir[0], col + dir[1]];
+	      POSITIONS.forEach(function (position) {
+	        var currentCell = [row + position[0], col + position[1]];
 	        if (that.validCell(currentCell)) {
-	          newBoard[currentCell[0]][currentCell[1]] *= -1;
+	          var r = currentCell[0];
+	          var c = currentCell[1];
+	          newBoard[r][c] = !newBoard[r][c]; //toggles light on/off
 	        }
 	      });
 	      this.setState({ board: newBoard });
 	      if (this.checkVictory()) {
-	        this.victory();
+	        setTimeout(this.victory, 1500); //timeout used to allow time for CSS transition to lights off
 	      }
 	    }
 	  }, {
@@ -21544,19 +21547,19 @@
 	    value: function getDisplayRows() {
 	      var _this2 = this;
 	
-	      var cellClassName = void 0;
+	      var cellClassName;
 	      var that = this;
 	      return this.state.board.map(function (row, rowIdx) {
 	        return row.map(function (lit, colIdx) {
-	          if (lit === -1) {
-	            cellClassName = "square off";
-	          } else {
+	          if (lit) {
 	            cellClassName = "square on";
+	          } else {
+	            cellClassName = "square off";
 	          }
 	          return _react2.default.createElement("div", { className: cellClassName,
 	            "data-row": rowIdx,
 	            "data-col": colIdx,
-	            onClick: _this2.toggleLight.bind(that, rowIdx, colIdx) });
+	            onClick: _this2.toggleLights.bind(that, rowIdx, colIdx) });
 	        });
 	      });
 	    }
@@ -21564,10 +21567,8 @@
 	    key: "checkVictory",
 	    value: function checkVictory() {
 	      for (var rowIdx = 0; rowIdx < this.boardSize; rowIdx++) {
-	        for (var colIdx = 0; colIdx < this.boardSize; colIdx++) {
-	          if (this.state.board[rowIdx][colIdx] === 1) {
-	            return false;
-	          }
+	        if (this.state.board[rowIdx].includes(true)) {
+	          return false;
 	        }
 	      }
 	      return true;
