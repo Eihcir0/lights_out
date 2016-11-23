@@ -18,11 +18,11 @@ class Game extends React.Component {
   }
 
   setupBoard() { //creates a 2d array of random true/false elements
-    var newBoard = [];
-    for (var row = 0; row < this.boardSize; row++) {
-      var newRow = [];
-      for (var col = 0; col < this.boardSize; col++) {
-        var lit = Math.random() >= 0.5 ? true : false; //lit true or false randomly assigned
+    let newBoard = [];
+    for (let row = 0; row < this.boardSize; row++) {
+      let newRow = [];
+      for (let col = 0; col < this.boardSize; col++) {
+        let lit = Math.random() >= 0.5 ? true : false; //lit true or false randomly assigned
         newRow.push(lit);
       }
       newBoard.push(newRow);
@@ -31,8 +31,8 @@ class Game extends React.Component {
   }
 
   validCell(currentCell) {
-    var row = currentCell[0];
-    var col = currentCell[1];
+    let row = currentCell[0];
+    let col = currentCell[1];
     return (row >= 0 &&
             row < this.boardSize &&
             col >= 0 &&
@@ -42,14 +42,14 @@ class Game extends React.Component {
 
 
   toggleLights(row,col) {
-    var newBoard = this.state.board;
+    let newBoard = this.state.board;
 
-    var that = this;
+    let that = this;
     POSITIONS.forEach(position => {
-      var currentCell = [row + position[0], col + position[1]];
+      let currentCell = [row + position[0], col + position[1]];
       if (that.validCell(currentCell)) {
-        var r = currentCell[0];
-        var c = currentCell[1];
+        let r = currentCell[0];
+        let c = currentCell[1];
         newBoard[r][c] = !newBoard[r][c]; //toggles light on/off
       }
     });
@@ -60,8 +60,8 @@ class Game extends React.Component {
   }
 
   getDisplayRows() {
-    var cellClassName;
-    var that = this;
+    let cellClassName;
+    let that = this;
     return this.state.board.map((row, rowIdx) => {
         return row.map((lit, colIdx) => {
           if (lit) {
@@ -81,7 +81,7 @@ class Game extends React.Component {
   }
 
   checkVictory() {
-    for (var rowIdx = 0; rowIdx < this.boardSize; rowIdx++) {
+    for (let rowIdx = 0; rowIdx < this.boardSize; rowIdx++) {
       if (this.state.board[rowIdx].includes(true)) {
           return false;
       }
@@ -96,7 +96,7 @@ class Game extends React.Component {
 
 
   render() {
-    var rows = this.getDisplayRows();
+    let rows = this.getDisplayRows();
 
       return (
         <div id="lightsout">

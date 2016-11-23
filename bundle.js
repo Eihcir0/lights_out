@@ -21547,7 +21547,7 @@
 	    value: function getDisplayRows() {
 	      var _this2 = this;
 	
-	      var cellClassName;
+	      var cellClassName = void 0;
 	      var that = this;
 	      return this.state.board.map(function (row, rowIdx) {
 	        return row.map(function (lit, colIdx) {

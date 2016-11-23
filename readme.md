@@ -77,11 +77,11 @@ The `board` portion of the state of the Game component is then set to this new a
 
 ```js
 setupBoard() { //creates a 2d array of random true/false elements
-  var newBoard = [];
-  for (var row = 0; row < this.boardSize; row++) {
-    var newRow = [];
-    for (var col = 0; col < this.boardSize; col++) {
-      var lit = Math.random() >= 0.5 ? true : false; //lit true or false randomly assigned
+  let newBoard = [];
+  for (let row = 0; row < this.boardSize; row++) {
+    let newRow = [];
+    for (let col = 0; col < this.boardSize; col++) {
+      let lit = Math.random() >= 0.5 ? true : false; //lit true or false randomly assigned
       newRow.push(lit);
     }
     newBoard.push(newRow);
@@ -109,14 +109,14 @@ The `toggleLights()` function iterates through each of the 5 possible positions 
 const POSITIONS = [[0,0],[-1,0],[1,0],[0,-1],[0,1]];
 ..
 toggleLights(row,col) {
-  var newBoard = this.state.board;
+  let newBoard = this.state.board;
 
-  var that = this;
+  let that = this;
   POSITIONS.forEach(position => {
-    var currentCell = [row + position[0], col + position[1]];
+    let currentCell = [row + position[0], col + position[1]];
     if (that.validCell(currentCell)) {
-      var r = currentCell[0];
-      var c = currentCell[1];
+      let r = currentCell[0];
+      let c = currentCell[1];
       newBoard[r][c] = !newBoard[r][c]; //toggles light on/off
     }
   });
@@ -145,7 +145,7 @@ At the end of the `toggleLights()` function, the `checkVictory()` function is ca
 
 ```js
 checkVictory() {
-  for (var rowIdx = 0; rowIdx < this.boardSize; rowIdx++) {
+  for (let rowIdx = 0; rowIdx < this.boardSize; rowIdx++) {
     if (this.state.board[rowIdx].includes(true)) {
         return false;
     }
@@ -175,6 +175,8 @@ Snapshots:   1 passed, 1 total
 Time:        4.929s
 Ran all test suites.
 ```
+Additionally, this demo was QA'd on the following screens:
+  - MacBook Air 13"
 
 And the following browsers:
   - Chrome ver 54.0.2840.71
